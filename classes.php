@@ -34,6 +34,15 @@ class db
 
         return $pdo;
     }
+
+    public static function recent50visitors()
+    {
+        $conn = self::getConn();
+
+        $data = $conn->query('SELECT * FROM visitors ORDER BY date DESC LIMIT 50')->fetchAll(PDO::FETCH_ASSOC);
+
+        return $data;
+    }
 }
 
 class analytics
@@ -50,7 +59,7 @@ class analytics
         $countrycode = $_GET["countrycode"];
         $in_eu = $_GET["ineu"];
         $page = $_GET["page"];
-        echo "called";
+
         db::logVisit($ip, $browserName, $country, $countrycode, $platform, $in_eu, $page);
     }
 
