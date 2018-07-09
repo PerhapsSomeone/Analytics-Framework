@@ -15,7 +15,7 @@ if (!(isset($_GET["country"]) && isset($_GET["countrycode"]) && isset($_GET["ip"
 print_r($_GET);
 
 analytics::autoEnterVisitor();
-echo "yet";
+
 ?>
 
 <script src="client.js"></script>
