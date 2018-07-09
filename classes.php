@@ -8,6 +8,10 @@
 
 class db
 {
+    /*
+    This function inserts the data of the visitor in the DB.
+    It requires all data. Use the analytics::autoEnterVisitor() function if you are unsure how it works.
+    */
     public static function logVisit($anonIP, $browser, $country, $countrycode, $plaftform, $ineu, $page)
     {
         $conn = self::getConn();
@@ -35,6 +39,9 @@ class db
         return $pdo;
     }
 
+    /*
+    Fetch an associative array of the 50 most recent DB entries.
+    */
     public static function recent50visitors()
     {
         $conn = self::getConn();
@@ -47,7 +54,9 @@ class db
 
 class analytics
 {
-
+    /*
+    Fully automatic way to store visitor data. No arguments needed.
+    */
     public static function autoEnterVisitor()
     {
         $browserArr = self::getBrowser();
@@ -63,6 +72,9 @@ class analytics
         db::logVisit($ip, $browserName, $country, $countrycode, $platform, $in_eu, $page);
     }
 
+    /*
+    Return an assocative array of user platform and browser info based on the User Agent. 
+    */
     public static function getBrowser()
     {
         $u_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -135,23 +147,11 @@ class analytics
         );
     }
 
+    /*
+    GDPR forbids it to directly store IPs. They are hashed in SHA512.
+    */
     public static function getAnonIP($ip)
     {
         return hash("sha512", $ip);
-    }
-
-    public static function getPageURL()
-    {
-        $pageURL = 'http';
-        if ($_SERVER["HTTPS"] == "on") {
-            $pageURL .= "s";
-        }
-        $pageURL .= "://";
-        if ($_SERVER["SERVER_PORT"] != "80") {
-            $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
-        } else {
-            $pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-        }
-        return $pageURL;
     }
 }

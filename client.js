@@ -1,4 +1,5 @@
 (function () {
+    // URLs to be used for data collection. Change the analyticsURL to point to the location of your analytics.php script!
     const analyticsURL = "http://localhost:8080/analytics.php";
     const ipfinder = "https://www.canihazip.com/s";
     const iplocator = "https://ipapi.co/";
@@ -8,8 +9,8 @@
     let ineu = false;
     let page = window.location.href;
 
-    function fetch(url, callback) {
-        let xhr = createCORSRequest('GET', url);
+    function fetch(url, callback) { // Fetch the services async so we dont cause a loading indicator.
+        let xhr = createCORSRequest('GET', url); // Create CORS compliant request or it will fail.
         if (!xhr) {
             alert('CORS not supported');
             return;
@@ -49,16 +50,16 @@
         return xhr;
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch(ipfinder, function (xhttp) {
+    document.addEventListener("DOMContentLoaded", function () { // Wait until the DOM is loaded fully.
+        fetch(ipfinder, function (xhttp) { // We contact the IP finder to get the IP of the client.
             ip = xhttp.responseText;
-            fetch(iplocator + ip + "/json/", function (xhttp) {
+            fetch(iplocator + ip + "/json/", function (xhttp) { // Then the IP geolocator is contacted with the client IP to get more data.
                 let json = JSON.parse(xhttp.responseText);
                 country = json["country_name"];
                 countrycode = json["country"];
                 ip = json["ip"];
                 ineu = json["in_eu"];
-
+		// We send a GET request to the analytics script to store the data.
                 fetch(analyticsURL + "?country=" + country + "&countrycode=" + countrycode + "&ip=" + ip + "&ineu=" + ineu + "&page=" + page, function () {
                     console.log("Successful request!");
                 });
