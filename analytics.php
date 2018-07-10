@@ -10,9 +10,10 @@ require "classes.php";
 
 if (!(isset($_GET["country"]) && isset($_GET["countrycode"]) && isset($_GET["ip"]) && isset($_GET["ineu"]) && isset($_GET["page"]))) {
     header("HTTP/1.1 400 Bad Request");
+    die("<b>400 - Bad Request</b>");
 }
 
-print_r($_GET);
+config::setupSentry();
 
 analytics::autoEnterVisitor();
 

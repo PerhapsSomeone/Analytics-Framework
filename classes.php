@@ -6,18 +6,47 @@
  * Time: 16:29
  */
 
+class config
+{
+
+    public static function setupSentry()
+    {
+
+        require "Raven/Autoloader.php";
+
+        Raven_Autoloader::register();
+
+        $key = self::getSentryKey();
+
+        $sentryClient = new Raven_Client($key);
+
+        $error_handler = new Raven_ErrorHandler($sentryClient);
+
+        $error_handler->registerExceptionHandler();
+        $error_handler->registerErrorHandler();
+        $error_handler->registerShutdownFunction();
+    }
+
+    private static function getSentryKey()
+    {
+        $config = file_get_contents("config.json");
+        $json = json_decode($config, true);
+        return $json["sentry_key"];
+    }
+}
+
 class db
 {
     /*
     This function inserts the data of the visitor in the DB.
     It requires all data. Use the analytics::autoEnterVisitor() function if you are unsure how it works.
     */
-    public static function logVisit($anonIP, $browser, $country, $countrycode, $plaftform, $ineu, $page)
+    public static function logVisit($anonIP, $browser, $country, $countrycode, $platform, $ineu, $page)
     {
         $conn = self::getConn();
         echo "called";
         $stmt = $conn->prepare("INSERT INTO `visitors` (`ip`, `browser`, `platform`, `country`, `page`, `countrycode`, `ineu`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$anonIP, $browser, $browser, $country, $page, $countrycode, $ineu]);
+        $stmt->execute([$anonIP, $browser, $platform, $country, $page, $countrycode, $ineu]);
     }
 
     public static function getConn()
