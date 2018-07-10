@@ -11,27 +11,19 @@ class config
 
     public static function setupSentry()
     {
+        $sentry_key = "https://13c21abe023c4c42bddbc40ca03bab1a:50782ff9f3d14037918e8d9d4490d03b@sentry.io/1240610";
 
         require "Raven/Autoloader.php";
 
         Raven_Autoloader::register();
 
-        $key = self::getSentryKey();
-
-        $sentryClient = new Raven_Client($key);
+        $sentryClient = new Raven_Client($sentry_key);
 
         $error_handler = new Raven_ErrorHandler($sentryClient);
 
         $error_handler->registerExceptionHandler();
         $error_handler->registerErrorHandler();
         $error_handler->registerShutdownFunction();
-    }
-
-    private static function getSentryKey()
-    {
-        $config = file_get_contents("config.json");
-        $json = json_decode($config, true);
-        return $json["sentry_key"];
     }
 }
 
