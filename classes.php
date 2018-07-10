@@ -91,7 +91,7 @@ class analytics
         $page = $_GET["page"];
 
         if (isset($_COOKIE["uuid"])) { // Check whether client already has UUID Cookie
-            if (strlen($_COOKIE["uuid"]) === 32) { // If UUID Length bigger/smaller than 32 it's invalid.
+            if (strlen($_COOKIE["uuid"]) === 36) { // If UUID Length bigger/smaller than 32 it's invalid.
                 $uuid = $_COOKIE["uuid"];
             } else {
                 $uuid = self::generateUUID(); // Regenerate UUID and set Cookie.
@@ -107,7 +107,7 @@ class analytics
     }
 
     /*
-    Return an assocative array of user platform and browser info based on the User Agent. 
+    Return an assocative array of user platform and browser info based on the User Agent.
     */
     public static function getBrowser()
     {
@@ -184,7 +184,7 @@ class analytics
 
     public static function setUUIDCookie($uuid)
     {
-        setcookie("uuid", $uuid);
+        setcookie("uuid", $uuid, strtotime('+5 years'));
     }
 
     /*
