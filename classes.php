@@ -81,7 +81,7 @@ class analytics
         $bname = 'Unknown';
         $platform = 'Unknown';
 
-        //First get the platform?
+        //First get the platform
         if (preg_match('/linux/i', $u_agent)) {
             $platform = 'linux';
         } elseif (preg_match('/macintosh|mac os x/i', $u_agent)) {
@@ -90,7 +90,7 @@ class analytics
             $platform = 'windows';
         }
 
-        // Next get the name of the useragent yes seperately and for good reason
+        // Next get the name of the useragent
         if (preg_match('/MSIE/i', $u_agent) && !preg_match('/Opera/i', $u_agent)) {
             $bname = 'Internet Explorer';
             $ub = "MSIE";
@@ -120,7 +120,7 @@ class analytics
 
         preg_match_all($pattern, $u_agent, $matches);
 
-        // see how many we have
+        // see how many matches there are
         $i = count($matches['browser']);
         if ($i != 1) {
             //we will have two since we are not using 'other' argument yet
@@ -139,6 +139,7 @@ class analytics
             $version = "?";
         }
 
+        // Return associative array of browser data.
         return array(
             'userAgent' => $u_agent,
             'name' => $bname,
