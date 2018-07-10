@@ -6,6 +6,7 @@
  * Time: 18:36
  */
 require "classes.php";
+
 ?>
 
 <html>
@@ -25,19 +26,19 @@ require "classes.php";
     <div class="notification centered">
         <div class="columns is-centered">
             <div class="column has-background-primary is-one-fifth\">
-                <i class="fas fa-globe"></i>
+                <i class="fas fa-globe"></i> (Country)
             </div>
             <div class="column has-background-primary is-one-fifth\">
-                <i class="fab fa-chrome"></i>
+                <i class="fab fa-chrome"></i> (OS)
             </div>
             <div class="column has-background-primary is-one-fifth\">
-                <i class="fas fa-euro-sign"></i>
+                <i class="fas fa-euro-sign"></i> (In-EU?)
             </div>
             <div class="column has-background-primary is-one-fifth\">
-                <i class="fas fa-calendar-alt"></i>
+                <i class="fas fa-calendar-alt"></i> (Date)
             </div>
             <div class="column has-background-primary is-one-fifth\">
-                <i class="fas fa-user-secret"></i>
+                <i class="fas fa-user-secret"></i> (Anonymous identifier)
             </div>
         </div>
 
@@ -65,7 +66,7 @@ require "classes.php";
             echo "</div>";
 
             echo "<div class=\"column has-background-primary is-one-fifth\">";
-            echo(substr($visitor["ip"], 0, -100) . "...");
+            echo($visitor["uuid"]);
             echo "</div>";
 
             echo "</div>";

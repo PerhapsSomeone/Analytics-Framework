@@ -33,12 +33,12 @@ class db
     This function inserts the data of the visitor in the DB.
     It requires all data. Use the analytics::autoEnterVisitor() function if you are unsure how it works.
     */
-    public static function logVisit($anonIP, $browser, $country, $countrycode, $platform, $ineu, $page)
+    public static function logVisit($anonIP, $browser, $country, $countrycode, $platform, $ineu, $page, $uuid)
     {
         $conn = self::getConn();
         echo "called";
-        $stmt = $conn->prepare("INSERT INTO `visitors` (`ip`, `browser`, `platform`, `country`, `page`, `countrycode`, `ineu`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$anonIP, $browser, $platform, $country, $page, $countrycode, $ineu]);
+        $stmt = $conn->prepare("INSERT INTO `visitors` (`ip`, `browser`, `platform`, `country`, `page`, `countrycode`, `ineu`, `uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$anonIP, $browser, $platform, $country, $page, $countrycode, $ineu, $uuid]);
     }
 
     public static function getConn()
@@ -90,7 +90,20 @@ class analytics
         $in_eu = $_GET["ineu"];
         $page = $_GET["page"];
 
-        db::logVisit($ip, $browserName, $country, $countrycode, $platform, $in_eu, $page);
+        if (isset($_COOKIE["uuid"])) { // Check whether client already has UUID Cookie
+            if (strlen($_COOKIE["uuid"]) === 32) { // If UUID Length bigger/smaller than 32 it's invalid.
+                $uuid = $_COOKIE["uuid"];
+            } else {
+                $uuid = self::generateUUID(); // Regenerate UUID and set Cookie.
+                self::setUUIDCookie($uuid);
+            }
+        } else {
+            $uuid = self::generateUUID(); // Regenerate UUID and set Cookie.
+            self::setUUIDCookie($uuid);
+        }
+
+
+        db::logVisit($ip, $browserName, $country, $countrycode, $platform, $in_eu, $page, $uuid);
     }
 
     /*
@@ -169,11 +182,35 @@ class analytics
         );
     }
 
+    public static function setUUIDCookie($uuid)
+    {
+        setcookie("uuid", $uuid);
+    }
+
     /*
     GDPR forbids it to directly store IPs. They are hashed in SHA512.
     */
     public static function getAnonIP($ip)
     {
         return hash("sha512", $ip);
+    }
+
+    /*
+    Generates an UUIDv4 in format of XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+    */
+    public static function generateUUID()
+    {
+        try {
+            $data = random_bytes(16);
+        } catch (Exception $e) {
+            $data = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
+        }
+
+        assert(strlen($data) == 16);
+
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

@@ -17,6 +17,3 @@ config::setupSentry();
 
 analytics::autoEnterVisitor();
 
-?>
-
-<script src="client.js"></script>
